@@ -1,0 +1,8 @@
+# dsh-taste-skill bundle layer.
+#
+# Inserts this package's plugin row into the profile composition. The plugin (index.js) exports
+# name = "taste-skill" and inject = ["skills"], and registers the DESIGN-TASTE-FRONTEND skill
+# through ctx.skills.register with a directory resource base under skills/.
+- insert:
+    - id: taste-skill
+      name: dsh-taste-skill
