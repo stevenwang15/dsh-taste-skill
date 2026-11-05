@@ -200,4 +200,3 @@ cp -R /path/to/taste-skill/skills/taste-skill skills/design-taste-frontend
 - 封装层：MIT。
 - 技能本体来自 [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill)，MIT，Copyright (c) 2026 Leonxlnx，原样收录于 `skills/design-taste-frontend/`；`LICENSE` 为上游原文。
 - 库里的占位照片来自 Unsplash（经 picsum.photos），仅作氛围；`assets.mjs` 找到的图片保留各自许可，必须按 `--credits` 在页面署名。
-- 本插件与招商银行、任何被用作设计练习的品牌均无关联。
