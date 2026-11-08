@@ -6,6 +6,16 @@
 
 > **English summary** — A DeepSeek Harness plugin that registers one native skill, `design-taste-frontend` (MIT port of tasteskill v2). Directions are dealt from a researched library instead of the model's taste, the page is measured in a real browser at 1440/768/390, photos are openly licensed with title/author/licence recorded, and the agent iterates on its own screenshots against a juror's rubric.
 
+![dsh-taste-skill 预览](docs/preview.png)
+
+### 一行安装
+
+```bash
+dsh plugin --profile desktop add github:stevenwang15/dsh-taste-skill
+```
+
+需要 Node 22+。完整装法、参数与卸载见下文。
+
 ---
 
 ## 它是什么
@@ -188,3 +198,15 @@ cp -R /path/to/taste-skill/skills/taste-skill skills/design-taste-frontend
 - 封装层：MIT。
 - 技能本体来自 [Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill)，MIT，Copyright (c) 2026 Leonxlnx，原样收录于 `skills/design-taste-frontend/`；`LICENSE` 为上游原文。
 - 库里的占位照片来自 Unsplash（经 picsum.photos），仅作氛围；`assets.mjs` 找到的图片保留各自许可，必须按 `--credits` 在页面署名。
+
+## DSH 插件家族
+
+| 插件 | 一句话 |
+| :--- | :--- |
+| [dsh-caveman](https://github.com/stevenwang15/dsh-caveman) | 让 agent 少说废话、多留事实 |
+| [dsh-taste-skill](https://github.com/stevenwang15/dsh-taste-skill) | 前端设计：先定方向，再量，再看 |
+| [dsh-session-workspace](https://github.com/stevenwang15/dsh-session-workspace) | 一个对话，一个独立工作区 |
+
+---
+
+遇到问题或想加功能，请[开 issue](https://github.com/stevenwang15/dsh-taste-skill/issues/new/choose)。如果这个插件帮到你，给个 ⭐ 能让更多人找到它。
