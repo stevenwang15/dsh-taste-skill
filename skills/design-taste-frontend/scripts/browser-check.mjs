@@ -25,7 +25,9 @@ const report = {
     required: '>=22',
   },
   browser: chrome
-    ? { found: true, path: chrome, source: envChrome ? 'environment' : 'default locations' }
+    // An env var pointing at a missing file falls through to the default locations, so name the
+    // source that actually produced the path.
+    ? { found: true, path: chrome, source: envChrome && chrome === envChrome ? 'environment' : 'default locations' }
     : {
         found: false,
         path: null,

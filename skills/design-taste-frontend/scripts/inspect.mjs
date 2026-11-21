@@ -22,10 +22,13 @@ import { judge, judgeLayout, judgeApp, APP_SKIP } from './lib/rules.mjs';
 import { viewportClass as name, screenshotLabel, isInspectionScreenshot } from './lib/inspection-files.mjs';
 
 const args = process.argv.slice(2);
-const flag = (name, def) => { const i = args.indexOf('--' + name); if (i === -1) return def; const v = args[i + 1]; args.splice(i, 2); return v; };
+// A flag at the end of the command, or one whose value is another flag, must not swallow the next
+// argument: fall back to the default and leave the rest of the command line intact.
+const flag = (name, def) => { const i = args.indexOf('--' + name); if (i === -1) return def; const v = args[i + 1]; if (v === undefined || v.startsWith('--')) { args.splice(i, 1); return def; } args.splice(i, 2); return v; };
 const has = (name) => { const i = args.indexOf('--' + name); if (i === -1) return false; args.splice(i, 1); return true; };
 const outDir = resolve(flag('out', '.taste-skill/inspect'));
 const widths = flag('widths', '1440,768,390').split(',').map(Number).filter(Boolean);
+if (!widths.length) { console.error('usage: --widths needs at least one number, e.g. --widths 1440,768,390'); process.exit(2); }
 let allow = flag('allow', '').split(',').filter(Boolean);
 const asJson = has('json');
 let appMode = has('app');
@@ -65,14 +68,15 @@ if (!/^https?:\/\//.test(target)) {
 const HEIGHT = { 1440: 900, 1280: 800, 1024: 768, 768: 1024, 390: 844, 375: 812 };
 
 mkdirSync(outDir, { recursive: true });
-// Screenshots from an earlier run would sit beside the new ones when the page got shorter.
-for (const f of readdirSync(outDir)) if (isInspectionScreenshot(f)) unlinkSync(join(outDir, f));
 // dsh: a missing browser is an environment problem, not a FAIL finding. Report it plainly, exit 2,
 // and let the agent fall back to lint.mjs (SKILL.md, Special cases: "No Chrome or Node 22").
 const browser = await Browser.launch().catch((e) => {
   console.error(`No browser for the visual gate: ${e.message}\nCheck with scripts/browser-check.mjs, or point CHROME_PATH at an installed Chrome/Chromium/Edge. The inspector did not run.`);
   process.exit(2);
 });
+// Screenshots from an earlier run would sit beside the new ones when the page got shorter. Only
+// clear them once the run can actually proceed, so a missing browser leaves the previous run intact.
+for (const f of readdirSync(outDir)) if (isInspectionScreenshot(f)) unlinkSync(join(outDir, f));
 const helper = await browser.newPage({ width: 1600, height: 1000 });
 const report = { url: server ? target : url, at: new Date().toISOString(), allow, viewports: [], findings: [], images: [] };
 

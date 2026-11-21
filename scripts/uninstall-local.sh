@@ -20,14 +20,17 @@ cd "$PROFILE"
   const fs = require("node:fs");
   const path = process.argv[1];
   const manifest = JSON.parse(fs.readFileSync(path, "utf8"));
-  const bundles = manifest.dsh?.profile?.bundles ?? [];
-  manifest.dsh.profile.bundles = bundles.filter((b) => b !== "dsh-taste-skill");
+  const bundles = manifest.dsh?.profile?.bundles;
+  // No dsh.profile.bundles means nothing was ever selected: skip instead of crashing on the assignment.
+  if (Array.isArray(bundles)) manifest.dsh.profile.bundles = bundles.filter((b) => b !== "dsh-taste-skill");
   fs.writeFileSync(path, JSON.stringify(manifest, null, 2) + "\n");
 ' "$PROFILE/package.json"
 
 "$NODE" "$PNPM" remove dsh-taste-skill --config.confirmModulesPurge=false || true
 
-STAMP="${2:-$(ls -t package.json.bak-* 2>/dev/null | head -1 | sed 's/.*\.bak-//')}"
+# No backup stamp given and no *.bak-* found: carry on without restoring. Under `set -o pipefail`
+# the failing `ls` would otherwise abort the script here, silently skipping the cleanup below.
+STAMP="${2:-$(ls -t package.json.bak-* 2>/dev/null | head -1 | sed 's/.*\.bak-//' || true)}"
 if [ -n "$STAMP" ]; then
   for f in package.json cordis.patch.yml pnpm-lock.yaml; do
     if [ -f "$f.bak-$STAMP" ]; then cp -p "$f.bak-$STAMP" "$f"; echo "restored $f from $f.bak-$STAMP"; fi

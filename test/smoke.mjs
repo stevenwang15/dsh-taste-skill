@@ -6,10 +6,12 @@
 // ctx.skills.register receives a valid runtime skill, and that the injected DSH runtime note
 // points at a real directory.
 import { existsSync, statSync } from 'node:fs'
-import { join } from 'node:path'
+import { join, sep } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-const root = fileURLToPath(new URL('..', import.meta.url))
+// resourceBase is published with forward slashes on every platform (see index.js), so the root must
+// be normalised before the prefix comparison — on Windows `C:\...` would never match `C:/...`.
+const root = fileURLToPath(new URL('..', import.meta.url)).split(sep).join('/')
 const mod = await import(new URL('../index.js', import.meta.url).href)
 
 const checks = []

@@ -16,7 +16,9 @@ import { createServer } from 'node:http';
 import { Browser, sleep } from './lib/cdp.mjs';
 
 const args = process.argv.slice(2);
-const flag = (k, d) => { const i = args.indexOf('--' + k); if (i === -1) return d; const v = args[i + 1]; args.splice(i, 2); return v; };
+// A flag at the end of the command, or one whose value is another flag, must not swallow the next
+// argument: fall back to the default and leave the rest of the command line intact.
+const flag = (k, d) => { const i = args.indexOf('--' + k); if (i === -1) return d; const v = args[i + 1]; if (v === undefined || v.startsWith('--')) { args.splice(i, 1); return d; } args.splice(i, 2); return v; };
 const outDir = resolve(flag('out', '.taste-skill/scenes'));
 const STEPS = Math.max(2, +flag('steps', 10)), WAIT = +flag('wait', 900);
 const only = flag('scene', '');
